@@ -1,0 +1,16 @@
+Package: separation
+Type: Package
+Title: Using informative priors to deal with separation in logistic regression
+    models
+Version: 0.1
+Date: 2014-09-30
+Author: Carlisle Rainey
+Maintainer: Carlisle Rainey <carlislerainey@gmail.com>
+Description: Provides a set of computational tools to compute the partial prior
+    predictive distribution, as well as tools MCMC estimation and plotting
+    inferences.
+License: MIT + file LICENSE
+Suggests:
+    testthat
+Imports:
+    compactr
