@@ -1,12 +1,16 @@
-# README
+---
+title: "README"
+output:
+  html_document:
+    keep_md: yes
+---
 
 This is the beginnings of an R packages that implements the ideas in my
 paper on dealing with separation in logit models. You can find pdf of the working draft of that paper [here](http://www.carlislerainey.com/papers/separation.pdf) and the GitHub repository for the paper [here](https://github.com/carlislerainey/priors-for-separation).
 
 `separation` requires the latest version of `compactr`, and both of these packages are available on GitHub.
 
-
-```r
+```{r, message = FALSE}
 devtools::install_github("carlislerainey/compactr")
 devtools::install_github("carlislerainey/separation")
 ```
@@ -15,8 +19,8 @@ The idea is simple. In order to draw meaningful inferences when facing separatio
 
 We can first calculate and summarize the PPPD for an "informative" prior distribution.
 
+```{r inf, fig.height=3, fig.width= 4, fig.path=""}
 
-```r
 # load package
 library(separation)
 
@@ -37,33 +41,12 @@ pppd_inf <- calc_pppd(f, data = politics_and_need, prior_sims = normal_2,
 
 # summarize the pppd from the informative prior
 print(pppd_inf)
-```
-
-```
-## 
-## Model:	oppose_expansion ~ gop_governor + percent_favorable_aca + percent_uninsured
-## Prior for gop_governor:	Normal(0, 2)
-## 
-##    percentile	predicted probability	first-difference	risk-ratio	
-##    1%		0.005			0.006			1.014			
-##    5%		0.014			0.028			1.071			
-##    25%		0.069			0.14			1.483			
-##    50%		0.166			0.262			2.58			
-##    75%		0.289			0.359			6.17			
-##    95%		0.4			0.414			29.71			
-##    99%		0.422			0.424			89.29			
-```
-
-```r
 plot(pppd_inf)
 ```
 
-![plot of chunk inf](inf.png) 
-
 We might also like to compare that to a "skeptical" and "enthusiastic prior"" distribution.
 
-
-```r
+```{r eth_skep, fig.height=2.5, fig.width=8, fig.path=""}
 # enthusiastic and skeptical prior
 pppd_enth <- calc_pppd(f, data = politics_and_need, prior_sims = normal_4, 
                    sep_var_name = "gop_governor", prior_label = "Normal(0, 4)")
@@ -74,5 +57,3 @@ pppds <- combine_pppd(pppd_skep, pppd_inf, pppd_enth)
 # plot all pppds for comparisons
 plot(pppds)
 ```
-
-![plot of chunk eth_skep](eth_skep.png) 
