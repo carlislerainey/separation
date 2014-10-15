@@ -7,26 +7,20 @@
 #'  first-differences.
 #'  
 #'  
-#'@param x Either a data frame or a matrix with column names.
+#'@param formula A model formula.
+#'@param data A data frame.
 #'
 #'@export
 
-set_at_median <- function(x) {
-  if (!(is.matrix(x) | is.data.frame(x))) {
-    stop("The argument \"x\" must be a data frame or matrix.")
-  }
-  if (is.matrix(x)) {
-    if (is.null(colnames(x))) {
-      stop("If the argument \"x\" is a matrix, then it must have column names.")
-    }
-  }
+set_at_median <- function(formula, data) {
+  mf <- model.frame(formula, data)
+  df <- mf[, -1]
   X_pred_list <- list()
-  if (is.matrix(x)) {  var_names <- colnames(x)  }
-  if (is.data.frame(x)) {  var_names <- names(x)  }
+  var_names <- names(df)
   n_vars <- length(var_names)
   for (i in 1:n_vars) {
-    if (is.numeric(x[, var_names[i]])) {
-      X_pred_list[[var_names[i]]] <- median(x[, var_names[i]], na.rm = TRUE)
+    if (is.numeric(df[, var_names[i]])) {
+      X_pred_list[[var_names[i]]] <- median(df[, var_names[i]], na.rm = TRUE)
     }
     else {
       warning(paste("The variable \"", var_names[i], "\" is not numeric. ", 
@@ -37,4 +31,3 @@ set_at_median <- function(x) {
   }
   return(X_pred_list)
 }
-

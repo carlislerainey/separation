@@ -10,11 +10,12 @@
 #'  
 #'  
 #'@param list A named list with scalars and up to one vector.
+#'@param formula The model formula.
 #'
 #'@export
 
 
-list_to_matrix <- function(list) {
+list_to_matrix <- function(list, formula) {
   # check arguments
   if (is.list(list)) {
     if (is.null(names(list))) {
@@ -51,5 +52,9 @@ list_to_matrix <- function(list) {
     X_pred_mat[, i] <- list[[i]]
   }
   colnames(X_pred_mat) <- names(list)
+  X_pred_df <- data.frame(X_pred_mat)
+  f2 <-  formula[-2] # drop outcome variable from formula
+  X_pred_mat <- model.matrix(f2, X_pred_df)
+  attr(X_pred_mat, "assign") <- NULL # strip old attributes
   return(X_pred_mat)
 } 

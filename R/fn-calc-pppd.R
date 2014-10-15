@@ -41,7 +41,7 @@ calc_pppd <- function(formula, data, prior_sims, sep_var_name,
   # estimate b.hat.mle
   if (is.null(X_pred_list)) {
     # create matrix at which to calculate the baseline
-    X_pred_list <- set_at_median(mle$x)
+    X_pred_list <- set_at_median(formula, data)
   }
   if (type == 1 | type == 2) {
     X_pred_list[[sep_var_name]] <- 1
@@ -49,7 +49,7 @@ calc_pppd <- function(formula, data, prior_sims, sep_var_name,
   if (type == 3 | type == 4) {
     X_pred_list[[sep_var_name]] <- 0
   }
-  X_pred_mat <- list_to_matrix(X_pred_list)
+  X_pred_mat <- list_to_matrix(X_pred_list, formula)
   # calculate the quantities of interest
   baseline <- predict(mle, newdata = data.frame(X_pred_mat))
   baseline_pr <- plogis(baseline)
