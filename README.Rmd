@@ -17,9 +17,38 @@ devtools::install_github("carlislerainey/separation")
 
 The idea is simple. In order to draw meaningful inferences when facing separation, you must choose an informative prior. This can be tricky with logistic regression models, because the coefficients are not on a scale that many researchers are comfortable with. To facilitate choose a reasonable, informative prior, researchers might focus on the partial prior predictive distribution, explained in the paper linked to above. The partial prior distribution allows researchers to focus on the usual quantities of interest, such as predicted probabilities, first-differences, and risk-ratios. Researchers can use this package to what prior distributions for the coefficients imply about the partial prior preditive distribution, which is easier to make sense of.
 
-We can first calculate and summarize the PPPD for an "informative" prior distribution.
+Let's look at a simple example. Suppose we estimate a simple model explaining governors' decisions to oppose the Medicaid expansion under the Affordable Care Act. In particular, we'd like to draw a conclusion about whether a governor's partisanship matters more than the level of need in her state. We might estimate a simple model using the data from [Barrilleaux and Rainey](http://www.carlislerainey.com/papers/need.pdf), which is included in the package `separation` installed above.
 
-```{r inf, fig.height=3, fig.width= 4, fig.path=""}
+```{r}
+data(politics_and_need)
+m <- glm(oppose_expansion ~ gop_governor + percent_uninsured, 
+         family = binomial, data = politics_and_need)
+
+library(texreg)  # for screenreg, which neatly prints the results
+screenreg(m)
+```
+
+You'll notice that we have separation, because no Democratic governors opposed the expansion, the variable `gop_governor` perfectly predicts zeros. We can see this in a table.
+
+```{r}
+xtabs(~ oppose_expansion + gop_governor, data = politics_and_need)
+```
+
+This separation leads to implausibly large estimates for the coefficient for `gop_governor` and, because the perfect prediction occurs when `gop_governor` equals one, the intercept as well. Notice, perhaps most importantly, that the standard errors are unusable as well.
+
+To get a handle on this, we need to provide some form of prior information to stablize the coefficient for `gop_governor`, which will in turn provide a reasonable estimate for the intercept. But what prior should we choose for `gop_governor`? A N(0, 2)? and N(0, 4)? What? To help make this choice, I introduce the concept of a partial prior predictive distribution that allows researchers to focus narrowly on a single region of the prior distribute--the only part that really matters. See [the paper](http://www.carlislerainey.com/papers/separation.pdf) for the details. 
+
+We have three quantities of interest that we might choose to focus on.
+
+1. predicted probability: The probability that a Democratic governor opposes the expansion.
+2. first-difference: The change in the probability of expansion as a governor's partisanship changes from Democrat to Republican.
+3. risk-ratio: How many times more likely is a Republican governor to oppose the expansion compared to a Democratic governor.
+
+In this case, it seems reasonable to focus on the probability that a Democratic governor opposes the expansion. That also happens to be the default quantity for the functions.
+
+Let's choose a N(0, 3) as a first guess at an "informative" prior distribution. (I know this is a reasonable choice because I experimented a little before writing this.) We first need to simulate from our chosen prior and then we can convert those simulation into simulations of predicted probabilities using the function `calc_pppd()`.
+
+```{r}
 
 # load package
 library(separation)
@@ -27,33 +56,66 @@ library(separation)
 # load data
 data(politics_and_need)
 
-# simulate from potential priors
-normal_1 <- rnorm(10000, sd = 1)
-normal_2 <- rnorm(10000, sd = 2)
-normal_4 <- rnorm(10000, sd = 4)
+# simulate from potential prior
+normal_3 <- rnorm(10000, sd = 3)
 
 # model formula
 f <- oppose_expansion ~ gop_governor + percent_favorable_aca + percent_uninsured
 
 # informative prior
-pppd_inf <- calc_pppd(f, data = politics_and_need, prior_sims = normal_2,     
-                   sep_var_name = "gop_governor", prior_label = "Normal(0, 2)")
+pppd_inf <- calc_pppd(f, data = politics_and_need, prior_sims = normal_3,     
+                   sep_var_name = "gop_governor", prior_label = "Normal(0, 3)")
 
-# summarize the pppd from the informative prior
+```
+
+We can summarize the percentiles of the distrubiotn with the generic `print()` function.
+
+```{r}
 print(pppd_inf)
+```
+
+That looks reasonable. There is an even chance of the probabilty of opposition falling above and below 0.09, which seems about right. Also, there is a 25% chance that the probability falls below 0.02, which also seems like a reasonable prior belief.
+
+To get an even better feel for this PPPD, we can use the generic `plot()` function to plot the distribution of the predicted probability.
+
+```{r inf, fig.height=4, fig.width= 6, fig.path=""}
 plot(pppd_inf)
 ```
 
-We might also like to compare that to a "skeptical" and "enthusiastic prior"" distribution.
+If we care about the distribution for the tiny probabilities, we can plot the distribution on the log scale. 
+
+```{r inf-log, fig.height=4, fig.width= 6, fig.path=""}
+plot(pppd_inf, log_scale = TRUE)
+```
+
+Again, the purpose of the prior distribution in dealing with separation is to rule out implausible large effects. Plotting on the log scale allows us to see exactly what predicted probabilities we are ruling out. We are essentially ruling out probabilities smaller than 0.001, which seems reasonable. 
+
+If we want, we can calculate the probability of falling below certain thresholds.
+
+```{r}
+mean(pppd_inf$pr < 0.01)
+mean(pppd_inf$pr < 0.001)
+```
+
+From this we can see that there is a probability of 0.15 that less than 1% of Democratic governors oppose the expansion and a probability of 0.025 that less than 0.1% of Democratic governors oppose the expansion. Again, these seem reasonable.
+
+We might also like to compare our informative prior to a "skeptical" and "enthusiastic" prior distribution. For simplicity, let's go with half and double the standard deviation of the informative prior, respectively. We can calculate the PPPD for these distributions as before and use the `combine_pppd()` function to put them together and then the generic `plot()` function for plotting.
 
 ```{r eth_skep, fig.height=2.5, fig.width=8, fig.path=""}
+
+# simulate from potential skeptical and enthusiastic priors
+normal_1 <- rnorm(10000, sd = 1.5)
+normal_4 <- rnorm(10000, sd = 9)
+
 # enthusiastic and skeptical prior
 pppd_enth <- calc_pppd(f, data = politics_and_need, prior_sims = normal_4, 
-                   sep_var_name = "gop_governor", prior_label = "Normal(0, 4)")
+                   sep_var_name = "gop_governor", prior_label = "Normal(0, 9)")
 pppd_skep <- calc_pppd(f, data = politics_and_need, prior_sims = normal_1, 
-                   sep_var_name = "gop_governor", prior_label = "Normal(0, 1)")
+                   sep_var_name = "gop_governor", prior_label = "Normal(0, 1.5)")
 pppds <- combine_pppd(pppd_skep, pppd_inf, pppd_enth)
 
 # plot all pppds for comparisons
 plot(pppds)
+plot(pppds, log_scale = TRUE)
+
 ```
