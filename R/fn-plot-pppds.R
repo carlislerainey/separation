@@ -73,7 +73,7 @@ plot.pppds <- function(pppds, qi_name = "pr", n_breaks = 50, log_scale = FALSE,
     current_number <- (current_row - 1)*n_col + current_col
     if (n_spots - n_col > current_number - 1 &
           current_number + n_col > n_pppds) {
-      addxaxis()
+      compactr::addxaxis()
     }
   }
 }
