@@ -117,13 +117,13 @@ print(pppd_inf)
 ## Prior for gop_governor:	Normal(0, 3)
 ## 
 ##    percentile	predicted probability	first-difference	risk-ratio	
-##    1%		0			0.012			1.029			
-##    5%		0.002			0.05			1.131			
-##    25%		0.026			0.207			1.934			
-##    50%		0.092			0.337			4.679			
-##    75%		0.222			0.403			16.76			
-##    95%		0.379			0.426			177.5			
-##    99%		0.416			0.428			1569			
+##    1%		0			0.009			1.02			
+##    5%		0.002			0.049			1.13			
+##    25%		0.024			0.206			1.925			
+##    50%		0.087			0.341			4.908			
+##    75%		0.223			0.405			18.09			
+##    95%		0.379			0.426			189.4			
+##    99%		0.42			0.428			1384			
 ```
 
 That looks reasonable. There is an even chance of the probabilty of opposition falling above and below 0.09, which seems about right. Also, there is a 25% chance that the probability falls below 0.02, which also seems like a reasonable prior belief.
@@ -156,7 +156,7 @@ mean(pppd_inf$pr < 0.01)
 ```
 
 ```
-## [1] 0.1406
+## [1] 0.1464
 ```
 
 ```r
@@ -164,7 +164,7 @@ mean(pppd_inf$pr < 0.001)
 ```
 
 ```
-## [1] 0.02324
+## [1] 0.02704
 ```
 
 From this we can see that there is a probability of 0.15 that less than 1% of Democratic governors oppose the expansion and a probability of 0.025 that less than 0.1% of Democratic governors oppose the expansion. Again, these seem reasonable.
