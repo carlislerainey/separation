@@ -38,32 +38,40 @@ plot.pppds <- function(pppds, qi_name = "pr", n_breaks = 50, log_scale = FALSE,
                        arrow_ht = 0.2, ...) {
   # the number of pppds
   n_pppds <- length(pppds)
-  # store all qis in a list
-  qi <- list()
+  # store all histograms  in a list
+  h <- list()
   for (i in 1:n_pppds) {
-    qi[[i]] <- pppds[[i]][[qi_name]]
+    h[[i]] <- plot.pppd(pppds[[i]], qi_name = qi_name, n_breaks = n_breaks, 
+                        log_scale = log_scale, upper = upper, lower = lower, 
+                        arrow_ht = arrow_ht, plot = FALSE, ...)
   }
   # find global lower
   if (is.null(lower)) {
     for (i in 1:n_pppds) {
-      lower <- min(lower, min(qi[[i]]))
+      lower <- min(lower, min(h[[i]]$breaks))
     }
   }
   # find global upper
   if (is.null(upper)) {
     for (i in 1:n_pppds) {
-      upper <- max(upper, max(qi[[i]]))
+      upper <- max(upper, max(h[[i]]$breaks))
     }
   }
+  # find global ht
+  ht <- NULL
+  for (i in 1:n_pppds) {
+    ht <- max(ht, max(h[[i]]$counts))
+  }
+  # set plot layout
   if (is.null(plot_matrix_layout)) {
     plot_matrix_layout <- c(1, n_pppds)
   }
   
   par(mfrow = plot_matrix_layout)
   for (i in 1:n_pppds) {
-    plot(pppds[[i]], upper = upper, lower = lower,
-         qi_name = qi_name, n_breaks = n_breaks, log_scale = log_scale, 
-         arrow_ht = arrow_ht, ...)
+    plot.pppd(pppds[[i]], qi_name = qi_name, n_breaks = n_breaks, 
+              log_scale = log_scale, upper = upper, lower = lower, 
+              arrow_ht = arrow_ht, plot = TRUE, ...)
     # plot any needed new axix
     n_row <- plot_matrix_layout[1]
     n_col <- plot_matrix_layout[2]

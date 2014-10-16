@@ -30,9 +30,9 @@
 #'    Defaults to \code{FALSE}.
 #'  @param ... Arguments passed to \code{eplot()} in the package \code{compactr}.
 
-compact_hist <- function(x, xlab = NULL, ylab = NULL, n_breaks = NULL,
-                         counts = TRUE, bar_color = "grey70", 
-                         log_scale = FALSE, ...) {
+compact_hist <- function(x, xlab = NULL, ylab = NULL, n_breaks = NULL, ht = NULL,
+                         xlim = NULL, counts = TRUE, bar_color = "grey70", 
+                         log_scale = FALSE, plot = TRUE, ...) {
   if (is.null(n_breaks)) {
     n_breaks <- "Sturges"
   }
@@ -44,24 +44,31 @@ compact_hist <- function(x, xlab = NULL, ylab = NULL, n_breaks = NULL,
     log <- ""
     h <- hist(x, plot = FALSE, breaks = n_breaks)
   }
-  if (counts) {
-    ht <- max(h$counts)
-    if (is.null(ylab)) {
-      ylab <- "Counts"
-    }
-  } else {
-    ht <- max(h$density)
-    if (is.null(ylab)) {
-      ylab <- "Counts"
+  if (is.null(ht)) {
+    if (counts) {
+      ht <- max(h$counts)
+      if (is.null(ylab)) {
+        ylab <- "Counts"
+      }
+    } else {
+      ht <- max(h$density)
+      if (is.null(ylab)) {
+        ylab <- "Counts"
+      }
     }
   }
-  compactr::eplot(xlim = range(h$breaks), 
-                  ylim = c(0, ht), 
-                  log = log, 
-                  xlab = xlab,
-                  ylab = ylab,
-                  ...) 
-  plot(h, freq = counts, add = TRUE,
-       border = NA, 
-       col = bar_color)
+  if (is.null(xlim)) {
+    xlim <- range(h$breaks)
+  }
+  if (plot == TRUE) {
+    compactr::eplot(xlim = xlim, 
+                    ylim = c(0, ht), 
+                    log = log, 
+                    xlab = xlab,
+                    ylab = ylab,
+                    ...) 
+    plot(h, freq = counts, add = TRUE,
+         border = NA, col = bar_color)
+  }
+  return(h)
 }

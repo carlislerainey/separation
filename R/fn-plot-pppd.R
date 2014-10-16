@@ -33,66 +33,69 @@
 
 
 plot.pppd <- function(pppd, qi_name = "pr", n_breaks = 50, log_scale = FALSE, 
-                      upper = NULL, lower = NULL, arrow_ht = 0.2, ...) {
-qi <- pppd[[qi_name]]
-# truncate qi and compute the number of truncated simulations ----------------
-percent_qi_trunc_right <- NULL
-if (!is.null(upper)) {
-  percent_qi_trunc_right <- 100*sum(qi > upper)/length(qi)
-  if (percent_qi_trunc_right > 0) {
-    message("Your choice of upper bound truncates ", round(percent_qi_trunc_right), 
-            "% of the simulations to the right. I'll try to include this information on the plot.")
+                      upper = NULL, lower = NULL, arrow_ht = 0.2, plot = TRUE,
+                      ...) {
+  qi <- pppd[[qi_name]]
+  # truncate qi and compute the number of truncated simulations ----------------
+  percent_qi_trunc_right <- NULL
+  if (!is.null(upper)) {
+    percent_qi_trunc_right <- 100*sum(qi > upper)/length(qi)
+    if (percent_qi_trunc_right > 0) {
+      message("Your choice of upper bound truncates ", round(percent_qi_trunc_right), 
+              "% of the simulations to the right. I'll try to include this information on the plot.")
+    }
+    if (percent_qi_trunc_right == 0) {
+      percent_qi_trunc_right <- NULL
+    }
+    qi <- qi[qi < upper]
   }
-  if (percent_qi_trunc_right == 0) {
-    percent_qi_trunc_right <- NULL
+  percent_qi_trunc_left <- NULL
+  if (!is.null(lower)) {
+    percent_qi_trunc_left <- 100*sum(qi < lower)/length(qi)
+    if (percent_qi_trunc_left > 0) {
+      message("Your choice of lower bound truncates ", round(percent_qi_trunc_left), 
+              "% of the simulations to the left. I'll try to include this information on the plot.")
+    }
+    if (percent_qi_trunc_left == 0) {
+      percent_qi_trunc_left <- NULL
+    }
+    qi <- qi[qi > lower]
+  }  
+  # add in the long names of the quantities of interest ------------------------
+  qi_long_name <- list(
+    rr = "Risk-Ratio",
+    fd = "First-Difference",
+    pr = "Predicted Probability")
+  # save options and update scipen so we don't plot scientific notation---------
+  old_options <- options()
+  options(scipen=8)
+  # plot the histogram ---------------------------------------------------------
+  h <- compact_hist(qi, n_breaks = n_breaks, log_scale = log_scale,
+                    xlim = c(lower, upper),
+                    xlab = qi_long_name[[qi_name]],
+                    main = pppd$prior_label, plot = plot)
+  # restore old options --------------------------------------------------------
+  options <- old_options
+  # add arrows and summary of truncation to plot -------------------------------
+  left <- par("usr")[1]
+  right <- par("usr")[2]
+  height <- par("usr")[4]
+  if (!is.null(percent_qi_trunc_right)) {
+    if (percent_qi_trunc_right > 0) {
+      add_trunc_arrow(from = left + 0.85*(right - left), 
+                      to = left + 0.93*(right - left), 
+                      ht = arrow_ht*height, 
+                      p = percent_qi_trunc_right)
+    }
   }
-  qi <- qi[qi < upper]
-}
-percent_qi_trunc_left <- NULL
-if (!is.null(lower)) {
-  percent_qi_trunc_left <- 100*sum(qi < lower)/length(qi)
-  if (percent_qi_trunc_left > 0) {
-    message("Your choice of lower bound truncates ", round(percent_qi_trunc_left), 
-            "% of the simulations to the left. I'll try to include this information on the plot.")
+  if (!is.null(percent_qi_trunc_left)) {
+    if (percent_qi_trunc_left > 0) {
+      add_trunc_arrow(from = left + 0.15*(right - left), 
+                      to = left + 0.07*(right - left), 
+                      ht = arrow_ht*height, 
+                      p = percent_qi_trunc_left)
+    }
   }
-  if (percent_qi_trunc_left == 0) {
-    percent_qi_trunc_left <- NULL
-  }
-  qi <- qi[qi > lower]
-}  
-# add in the long names of the quantities of interest ------------------------
-qi_long_name <- list(
-  rr = "Risk-Ratio",
-  fd = "First-Difference",
-  pr = "Predicted Probability")
-# save options and update scipen so we don't plot scientific notation---------
-old_options <- options()
-options(scipen=10000)
-# plot the histogram ---------------------------------------------------------
-compact_hist(qi, n_breaks = n_breaks, log_scale = log_scale,
-             xlab = qi_long_name[[qi_name]],
-             main = pppd$prior_label)
-# restore old options --------------------------------------------------------
-options <- old_options
-# add arrows and summary of truncation to plot -------------------------------
-left <- par("usr")[1]
-right <- par("usr")[2]
-height <- par("usr")[4]
-if (!is.null(percent_qi_trunc_right)) {
-  if (percent_qi_trunc_right > 0) {
-    add_trunc_arrow(from = left + 0.85*(right - left), 
-                    to = left + 0.93*(right - left), 
-                    ht = arrow_ht*height, 
-                    p = percent_qi_trunc_right)
-  }
-}
-if (!is.null(percent_qi_trunc_left)) {
-  if (percent_qi_trunc_left > 0) {
-    add_trunc_arrow(from = left + 0.15*(right - left), 
-                    to = left + 0.07*(right - left), 
-                    ht = arrow_ht*height, 
-                    p = percent_qi_trunc_left)
-  }
-}
+  return(h)
 }
 
