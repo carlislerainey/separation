@@ -27,6 +27,8 @@
 #'  @param lower The lower bound of quantity of interest to plot.
 #'  @param arrow_ht The height of the information about truncation. Defaults to 
 #'  0.2. The bottom of the plot is 0.0 and the top is 1.0.
+#'  @param plot Logical. Should the histgram be plotted? If FALSE, the histogram is not 
+#'  plotted and the data for the histogram are returned.
 #'  @param ... Arguments passed to \code{compact_hist()}.
 #'  
 #'  @export
@@ -96,6 +98,8 @@ plot.pppd <- function(pppd, qi_name = "pr", n_breaks = 50, log_scale = FALSE,
                       p = percent_qi_trunc_left)
     }
   }
-  return(h)
+  if (plot == FALSE) {
+    return(h)
+  }
 }
 

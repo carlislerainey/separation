@@ -23,11 +23,15 @@
 #'  of breakpoints. 
 #'  \item A function to compute the number of cells.
 #'  }
+#'  @param ht The height of the y axis.
+#'  @param xlim The limits of the x axis.
 #'  @param counts Logical; should the heights be counts. If \code{FALSE}, then 
 #'  probabilities are used instead.
 #'  @param bar_color The color of the bars. Defaults to \code{"grey70"}.
 #'  @param log_scale Logical; should the x axis be plotted on the log scale?
 #'    Defaults to \code{FALSE}.
+#'  @param plot Logical. Should the histgram be plotted? If FALSE, the histogram is not 
+#'  plotted and the data for the histogram are returned.
 #'  @param ... Arguments passed to \code{eplot()} in the package \code{compactr}.
 
 compact_hist <- function(x, xlab = NULL, ylab = NULL, n_breaks = NULL, ht = NULL,
@@ -70,5 +74,7 @@ compact_hist <- function(x, xlab = NULL, ylab = NULL, n_breaks = NULL, ht = NULL
     plot(h, freq = counts, add = TRUE,
          border = NA, col = bar_color)
   }
-  return(h)
+  if (plot == FALSE) {
+    return(h)
+  }
 }
