@@ -117,5 +117,10 @@ pppds <- combine_pppd(pppd_skep, pppd_inf, pppd_enth)
 # plot all pppds for comparisons
 plot(pppds)
 plot(pppds, log_scale = TRUE)
+```
 
+The notation looks a little sloppy, so we can use `compactr::eplot()`'s ability to use scientific notation by giving the argument `xticklab = "sci_notation"`, which `plot()` will pass to `compactr::eplot()`.
+
+```{r sci_notation, fig.height=2.5, fig.width=8, fig.path=""}
+plot(pppds, log_scale = TRUE, xticklab = "sci_notation")
 ```
