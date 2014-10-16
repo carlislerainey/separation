@@ -75,7 +75,7 @@ plot.pppd <- function(pppd, qi_name = "pr", n_breaks = 50, log_scale = FALSE,
   h <- compact_hist(qi, n_breaks = n_breaks, log_scale = log_scale,
                     xlim = c(lower, upper),
                     xlab = qi_long_name[[qi_name]],
-                    main = pppd$prior_label, plot = plot)
+                    main = pppd$prior_label, plot = plot, ...)
   # restore old options --------------------------------------------------------
   options <- old_options
   # add arrows and summary of truncation to plot -------------------------------
