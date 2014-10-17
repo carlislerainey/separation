@@ -13,9 +13,24 @@
 #' @param n_thin The thinning interval used in the simulation. The number of MCMC 
 #'                iterations must be divisible by this value.
 #' @param n_cores The number of MCMC cores. Defaults to the number of chains.
-#' @param The tuning parameter for the Metropolis sampling. Can be either a 
+#' @param tune The tuning parameter for the Metropolis sampling. Can be either a 
 #' positive scalar or a (k+1)-vector, where k is the number of variables in the
 #' model. Presently passed to \code{MCMCmetrop1R}.
+#' 
+#' 
+#' @references Firth, David. 1993. "Bias Reduction of Maximum Likelihood 
+#'   Estimates." Biometrika 80(1):27–38.
+#' @references Heinze, Georg, and Michael Schemper. 2002. "A Solution to the 
+#'   Problem of Separation in Logistic Regression." Statistics in Medicine 
+#'   21(16):2409–2419.
+#' @references Jeffreys, H. 1946. "An Invariant Form of the Prior Probability in
+#'   Estimation Problems." Proceedings of the Royal Society of London, Series A 
+#'   186(1007):453–461.
+#' @references Poirier, Dale. 1994. "Jeffreys’ Prior for Logit Models." Journal
+#'   of Econometrics 63(2):327–339.
+#' @references Zorn, Christopher. 2005. "A Solution to Separation in Binary 
+#'   Response Models." Political Analysis 13(2):157–170.
+#'   
 #' @export
 
 

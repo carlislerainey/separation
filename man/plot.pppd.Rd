@@ -5,7 +5,8 @@
  \code{compactr} package.}
 \usage{
 \method{plot}{pppd}(pppd, qi_name = "pr", n_breaks = 50,
-  log_scale = FALSE, upper = NULL, lower = NULL, arrow_ht = 0.2, ...)
+  log_scale = FALSE, upper = NULL, lower = NULL, arrow_ht = 0.2,
+  plot = TRUE, ...)
 }
 \arguments{
 \item{pppd}{An object of class \code{pppd}, created by the function \link{calc_pppd()}.}
@@ -35,6 +36,9 @@ The other options are \code{"fd"} and \code{"rr"}.
 
 \item{arrow_ht}{The height of the information about truncation. Defaults to
 0.2. The bottom of the plot is 0.0 and the top is 1.0.}
+
+\item{plot}{Logical. Should the histgram be plotted? If FALSE, the histogram is not
+plotted and the data for the histogram are returned.}
 
 \item{...}{Arguments passed to \code{compact_hist()}.}
 }

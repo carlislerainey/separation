@@ -4,8 +4,9 @@
 \title{Plots a histogram using the compact axis notation from the
  \code{compactr} package.}
 \usage{
-compact_hist(x, xlab = NULL, ylab = NULL, n_breaks = NULL,
-  counts = TRUE, bar_color = "grey70", log_scale = FALSE, ...)
+compact_hist(x, xlab = NULL, ylab = NULL, n_breaks = NULL, ht = NULL,
+  xlim = NULL, counts = TRUE, bar_color = "grey70", log_scale = FALSE,
+  plot = TRUE, ...)
 }
 \arguments{
 \item{x}{A vector of values for which the histogram is desired.}
@@ -28,6 +29,10 @@ TRUE} and "Density" if \code{counts = FALSE}.}
  \item A function to compute the number of cells.
  }}
 
+\item{ht}{The height of the y axis.}
+
+\item{xlim}{The limits of the x axis.}
+
 \item{counts}{Logical; should the heights be counts. If \code{FALSE}, then
 probabilities are used instead.}
 
@@ -35,6 +40,9 @@ probabilities are used instead.}
 
 \item{log_scale}{Logical; should the x axis be plotted on the log scale?
   Defaults to \code{FALSE}.}
+
+\item{plot}{Logical. Should the histgram be plotted? If FALSE, the histogram is not
+plotted and the data for the histogram are returned.}
 
 \item{...}{Arguments passed to \code{eplot()} in the package \code{compactr}.}
 }

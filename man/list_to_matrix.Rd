@@ -3,10 +3,12 @@
 \alias{list_to_matrix}
 \title{Convert a list to a matrix}
 \usage{
-list_to_matrix(list)
+list_to_matrix(list, formula)
 }
 \arguments{
 \item{list}{A named list with scalars and up to one vector.}
+
+\item{formula}{The model formula.}
 }
 \description{
 \code{list_to_matrix} takes a list of scalars and possibly one

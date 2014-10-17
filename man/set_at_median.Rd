@@ -3,10 +3,12 @@
 \alias{set_at_median}
 \title{Set variables at their medians}
 \usage{
-set_at_median(x)
+set_at_median(formula, data)
 }
 \arguments{
-\item{x}{Either a data frame or a matrix with column names.}
+\item{formula}{A model formula.}
+
+\item{data}{A data frame.}
 }
 \description{
 \code{set_at_median} returns a list of the median of every
