@@ -96,7 +96,7 @@ sim_post_normal <- function(formula, data, sep_var, sd = 4.5,
               R_hat = R_hat,
               mle = mle,
               data = data,
-              prior = "Jeffreys",
+              prior = paste("Normal(0, ", sd, ")", sep = ""),
               fn_args = fn_args)
   return(res)
 }

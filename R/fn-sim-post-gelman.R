@@ -39,7 +39,10 @@ sim_post_gelman <- function(formula, data,
   mf <- model.frame(formula, data) 
   y <- model.response(mf)
   X <- model.matrix(formula, data)
-  X <- Matrix::Matrix(X)
+  mean_X <- apply(X, 2, mean)
+  sd_X <- apply(X, 2, sd)
+  std_X <- apply(X, 2, arm::rescale)
+  X <- Matrix::Matrix(std_X)
   n_burnin <- floor(n_burnin)
   cat("\nComputing proposal distribution...\n")
   mle <- arm::bayesglm(formula, data = data, family = binomial)
@@ -101,7 +104,7 @@ sim_post_gelman <- function(formula, data,
               R_hat = R_hat,
               mle = mle,
               data = data,
-              prior = "Jeffreys",
+              prior = "Gelman",
               fn_args = fn_args)
   return(res)
 }
