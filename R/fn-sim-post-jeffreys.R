@@ -106,5 +106,6 @@ sim_post_jeffreys <- function(formula, data, n_sims = 1000, n_burnin = n_sims/2,
               data = data,
               prior = "Jeffreys",
               fn_args = fn_args)
+  class(res) <- "post"
   return(res)
 }

@@ -98,5 +98,6 @@ sim_post_normal <- function(formula, data, sep_var, sd = 4.5,
               data = data,
               prior = paste("Normal(0, ", sd, ")", sep = ""),
               fn_args = fn_args)
+  class(res) <- "post"
   return(res)
 }
