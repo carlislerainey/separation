@@ -1,16 +1,16 @@
 #'Print summary of the partial prior predictive distribution.
 #'@title Print summary of the partial prior predictive distribution.
 #'  
-#'@description \code{print.post()} and \code{print.post_gelman()} print a summary for object of the class \code{post} and \code{post_gelman} created by the functions \code{sim_post_*()}.
+#'@description \code{print.post()} prints a summary for objects of the class \code{post} created by the functions \code{sim_post_*()}.
 #'
 #'
-#'@param post An object created by the functions \code{sim_post_*()} with class \code{post} or \code{post_gelman}.
+#'@param post An object created by the functions \code{sim_post_*()} with class \code{post}.
 #'@param digits The number of digits for printing.
 #'@param prob A numeric scalar in the interval (0,1) giving the target probability content of the intervals.
 #'
 #'@export
 
-print.post <- print.post_gelman <- function(post, digits = 2, prob = 0.9) {
+print.post <- function(post, digits = 2, prob = 0.9) {
   cat("\n")
   cat(" Model:\t"); print(post$fn_args$formula)
   cat(" Prior:\t"); cat(post$prior); cat("\n\n")

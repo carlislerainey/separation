@@ -103,6 +103,6 @@ sim_post_gelman <- function(formula, data,
               data = data,
               prior = "Gelman",
               fn_args = fn_args)
-  class(res) <- "post_gelman"
+  class(res) <- "post"
   return(res)
 }

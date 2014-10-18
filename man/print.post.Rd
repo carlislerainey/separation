@@ -6,14 +6,14 @@
 \method{print}{post}(post, digits = 2, prob = 0.9)
 }
 \arguments{
-\item{post}{An object created by the functions \code{sim_post_*()} with class \code{post} or \code{post_gelman}.}
+\item{post}{An object created by the functions \code{sim_post_*()} with class \code{post}.}
 
 \item{digits}{The number of digits for printing.}
 
 \item{prob}{A numeric scalar in the interval (0,1) giving the target probability content of the intervals.}
 }
 \description{
-\code{print.post()} and \code{print.post_gelman()} print a summary for object of the class \code{post} and \code{post_gelman} created by the functions \code{sim_post_*()}.
+\code{print.post()} prints a summary for objects of the class \code{post} created by the functions \code{sim_post_*()}.
 }
 \details{
 Print summary of the partial prior predictive distribution.
