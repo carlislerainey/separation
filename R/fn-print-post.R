@@ -5,26 +5,36 @@
 #'
 #'
 #'@param post An object created by the functions \code{sim_post_*()} with class \code{post} or \code{post_gelman}.
-#'
+#'@param digits The number of digits for printing.
+#'@param prob A numeric scalar in the interval (0,1) giving the target probability content of the intervals.
 #'
 #'@export
 
-print.post <- print.post_gelman <- function(post) {
+print.post <- print.post_gelman <- function(post, digits = 2, prob = 0.9) {
   cat("\n")
   cat(" Model:\t"); print(post$fn_args$formula)
   cat(" Prior:\t"); cat(post$prior); cat("\n\n")
-  median <- apply(post$mcmc, 2, median)
-  mean <- apply(post$mcmc, 2, mean)
-  p05 <- apply(post$mcmc, 2, quantile, 0.05)
-  p95 <- apply(post$mcmc, 2, quantile, 0.95)
-  res <- cbind(mean, median, p05, p95)
+  fmt <- paste("%.", digits, "f", sep = "")
+  mean <- sprintf(fmt, apply(post$mcmc, 2, mean))
+  median <- sprintf(fmt, apply(post$mcmc, 2, median))
+  mode <- sprintf(fmt, find_modes(post$mcmc))
+  p_lo <- sprintf(fmt, apply(post$mcmc, 2, quantile, (1 - prob)/2))
+  p_hi <- sprintf(fmt, apply(post$mcmc, 2, quantile, 1 - (1 - prob)/2))
+  et_ci <- paste("[", p_lo, ", ", p_hi, "]", sep = "")
+  et_ci_name <- paste(100*prob, "% et ci", sep = "")
+  hpd <- coda::HPDinterval(coda::as.mcmc(post$mcmc), prob = prob)
+  hpd_lo <- sprintf(fmt, hpd[, 1])
+  hpd_hi <- sprintf(fmt, hpd[, 2])
+  hpd_ci <- paste("[", hpd_lo, ", ", hpd_hi, "]", sep = "")
+  hpd_ci_name <- paste(100*prob, "% hpd ci", sep = "")
+  R_hat <- sprintf(fmt, post$R_hat[[1]][, 1])
+  res <- cbind(mean, median, mode, et_ci, hpd_ci, R_hat)
   rownames(res) <- colnames(post$mcmc)
-  colnames(res) <- c("mean", "median", "5th", "95th")
-  print(round(res, 2))
+  colnames(res) <- c("mean", "median", "mode", et_ci_name, hpd_ci_name, "R-hat")
+  print(noquote(res), right = TRUE)
   cat("----\n")
   cat("Burnin:\t"); cat(post$fn_args$n_burnin); cat("\n")
   cat("Sims:\t"); cat(post$fn_args$n_sims); cat("\n")
   cat("Chains:\t"); cat(post$fn_args$n_chains); cat("\n")
   cat("R-hat:\t"); cat(round(post$R_hat[[2]], 1)); cat("\n")
 }
-

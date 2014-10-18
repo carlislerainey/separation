@@ -2,11 +2,11 @@
 
 S3method(plot,pppd)
 S3method(plot,pppds)
+S3method(print,post)
+S3method(print,pppd)
 export(calc_pppd)
 export(combine_pppd)
 export(list_to_matrix)
-export(print.post)
-export(print.pppd)
 export(set_at_median)
 export(sim_post_gelman)
 export(sim_post_jeffreys)

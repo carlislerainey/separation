@@ -3,7 +3,7 @@
 \alias{print.pppd}
 \title{Print summary of the partial prior predictive distribution.}
 \usage{
-print.pppd(pppd, probs = c(0.01, 0.05, 0.25, 0.5, 0.75, 0.95, 0.99),
+\method{print}{pppd}(pppd, probs = c(0.01, 0.05, 0.25, 0.5, 0.75, 0.95, 0.99),
   round_to = 3)
 }
 \arguments{
