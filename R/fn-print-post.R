@@ -9,7 +9,7 @@
 #'@param prob A numeric scalar in the interval (0,1) giving the target probability content of the intervals.
 #'
 #'@export
-
+#'
 print.post <- function(post, digits = 2, prob = 0.9) {
   cat("\n")
   cat(" Model:\t"); print(post$fn_args$formula)
@@ -28,9 +28,10 @@ print.post <- function(post, digits = 2, prob = 0.9) {
   hpd_ci <- paste("[", hpd_lo, ", ", hpd_hi, "]", sep = "")
   hpd_ci_name <- paste(100*prob, "% hpd ci", sep = "")
   R_hat <- sprintf(fmt, post$R_hat[[1]][, 1])
-  res <- cbind(mean, median, mode, et_ci, hpd_ci, R_hat)
+  ess <- sprintf(fmt, coda::effectiveSize(coda::as.mcmc(post$mcmc)))
+  res <- cbind(mean, median, mode, et_ci, hpd_ci, R_hat, ess)
   rownames(res) <- colnames(post$mcmc)
-  colnames(res) <- c("mean", "median", "mode", et_ci_name, hpd_ci_name, "R-hat")
+  colnames(res) <- c("mean", "median", "mode", et_ci_name, hpd_ci_name, "R-hat", "eff. n")
   print(noquote(res), right = TRUE)
   cat("----\n")
   cat("Burnin:\t"); cat(post$fn_args$n_burnin); cat("\n")
