@@ -28,7 +28,7 @@ print.post <- function(post, digits = 2, prob = 0.9) {
   hpd_ci <- paste("[", hpd_lo, ", ", hpd_hi, "]", sep = "")
   hpd_ci_name <- paste(100*prob, "% hpd ci", sep = "")
   R_hat <- sprintf(fmt, post$R_hat[[1]][, 1])
-  ess <- sprintf(fmt, coda::effectiveSize(coda::as.mcmc(post$mcmc)))
+  ess <- sprintf(fmt, coda::effectiveSize(post$mcmc_chains))
   res <- cbind(mean, median, mode, et_ci, hpd_ci, R_hat, ess)
   rownames(res) <- colnames(post$mcmc)
   colnames(res) <- c("mean", "median", "mode", et_ci_name, hpd_ci_name, "R-hat", "eff. n")
