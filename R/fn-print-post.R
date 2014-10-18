@@ -27,7 +27,11 @@ print.post <- function(post, digits = 2, prob = 0.9) {
   hpd_hi <- sprintf(fmt, hpd[, 2])
   hpd_ci <- paste("[", hpd_lo, ", ", hpd_hi, "]", sep = "")
   hpd_ci_name <- paste(100*prob, "% hpd ci", sep = "")
-  R_hat <- sprintf(fmt, post$R_hat[[1]][, 1])
+  if (post$fn_args$n_chains > 1) {
+    R_hat <- sprintf(fmt, post$R_hat[[1]][, 1])
+  } else {
+    R_hat <- "-"
+  }
   ess <- sprintf(fmt, coda::effectiveSize(post$mcmc_chains))
   res <- cbind(mean, median, mode, et_ci, hpd_ci, R_hat, ess)
   rownames(res) <- colnames(post$mcmc)
@@ -37,5 +41,9 @@ print.post <- function(post, digits = 2, prob = 0.9) {
   cat("Burnin:\t"); cat(post$fn_args$n_burnin); cat("\n")
   cat("Sims:\t"); cat(post$fn_args$n_sims); cat("\n")
   cat("Chains:\t"); cat(post$fn_args$n_chains); cat("\n")
-  cat("R-hat:\t"); cat(round(post$R_hat[[2]], 1)); cat("\n")
+  if (post$fn_args$n_chains > 1) {
+    cat("R-hat:\t"); cat(round(post$R_hat[[2]], 1)); cat("\n")
+  } else {
+    cat("R-hat:\t"); cat("-"); cat("\n")
+  }
 }
