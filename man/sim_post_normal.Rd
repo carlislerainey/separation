@@ -37,4 +37,8 @@ model. Presently passed to \code{MCMCmetrop1R}.}
 simulations using a normal prior on the separating variable and improper, uinform
 priors on the remaining variables.
 }
+\references{
+Rainey, Carlisle. "Dealing with Separation in Logistic Regression
+Model." Working paper. Available at \url{http://crain.co/papers/separation.pdf}.
+}
 

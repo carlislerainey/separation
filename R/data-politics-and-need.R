@@ -19,4 +19,10 @@
 #'   \item{percent_nonwhite}{the percent of the state that is non-white} 
 #'   \item{percent_metro}{the percent of the state that resides in a
 #'   metropolitan area}}
+#'   
+#'   @references Barrilleaux, Charles and Carlisle Rainey. 2014. "The Politics 
+#'   of Need: Examining Governors' Decisions to Oppose the 'Obamacare' Medicaid 
+#'   Expansion." State Politics and Policy Quarterly. Forthcoming. Available at 
+#'   \url{http://crain.co/papers/need.pdf}.
+#'   
 "politics_and_need"

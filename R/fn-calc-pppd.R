@@ -1,5 +1,5 @@
 
-#'Calculate partial prior predictive distribution
+#'
 #'@title Partial prior predictive distribution
 #'  
 #'@description \code{calc_pppd} returns the partial prior predictive
@@ -14,7 +14,38 @@
 #'  TRUE. If FALSE, the \code{sep_var_at} is treated as the high value.
 #'@param X_pred_list A named list of values at which to set variables. The function
 #'  \link{set_at_median()} facilitates creating this list.
-#' @param prior_label A character naming the prior used.
+#' @param prior_label The name of the prior used.
+#' 
+#' @details Researchers can use this function to convert simulations from the 
+#' prior distribution to simulations from the partial prior predictive distribution
+#' See Rainey (2014) for the details.
+#' 
+#' @references Rainey, Carlisle. 2014. "Dealing with Separation in Logistic Regression
+#' Model." Working paper. Available at \url{http://crain.co/papers/separation.pdf}.
+#' 
+#' @examples
+#' 
+#' # load data from Barrilleaux and Rainey (2014)
+#' data(politics_and_need)
+#' 
+#' # prior simulations
+#' normal1 <- rnorm(10000, sd = 1)
+#' 
+#' # formula
+#' f <- oppose_expansion ~ gop_governor + percent_favorable_aca + percent_uninsured
+#' 
+#' # convert prior simulations of the coefficient to simulations of the
+#' #   quantitie of interest
+#' pppd <- calc_pppd(f, data = politics_and_need, prior_sims = normal1, 
+#'                   sep_var_name = "gop_governor", prior_label = "N(0, 1)")
+#' 
+#' # plot and print summaries of the PPPD
+#' print(pppd)
+#' 
+#' par(mfrow = c(1, 1))
+#' plot(pppd)  # predicted probability is the default
+#' plot(pppd, qi_name = "rr")  # risk-ratio
+#' plot(pppd, qi_name = "fd")  # first-difference
 #' 
 #' @export
 

@@ -8,7 +8,9 @@
 #'@param pppd An object of class \code{pppd}, created by the function \link{calc_pppd()}.
 #'@param qi_name The name of the quantity of interest to plot. Defaults to \code{"pr"}. 
 #'The other options are \code{"fd"} and \code{"rr"}.
-#'\enumerate{ \item A single number giving the number of
+#'@param n_breaks One of the following:
+#'  \enumerate{ 
+#'  \item A single number giving the number of
 #'  cells for the histogram. Defaults to 50. For examining the partial prior
 #'  predictive distritution, too many breaks are preferable to too few.
 #'  \item A character string naming an algorithm to
@@ -20,14 +22,14 @@
 #'  of breakpoints. 
 #'  \item A function to compute the number of cells.
 #'  }
-#'  @param log_scale Logical; should the quantity of interest be plotted on the log scale?
+#'@param log_scale Logical; should the quantity of interest be plotted on the log scale?
 #'    Defaults to \code{FALSE}. I recommend setting to \code{TRUE} if the distribution 
 #'    has a long right tail, as can happen with risk-ratios in certain situations.
-#'  @param upper The upper bound of quantity of interest to plot.
-#'  @param lower The lower bound of quantity of interest to plot.
-#'  @param arrow_ht The height of the information about truncation. Defaults to 
+#'@param upper The upper bound of quantity of interest to plot.
+#'@param lower The lower bound of quantity of interest to plot.
+#'@param arrow_ht The height of the information about truncation. Defaults to 
 #'  0.2. The bottom of the plot is 0.0 and the top is 1.0.
-#'  @param plot Logical. Should the histgram be plotted? If FALSE, the histogram is not 
+#'@param plot Logical. Should the histgram be plotted? If FALSE, the histogram is not 
 #'  plotted and the data for the histogram are returned.
 #'  @param ... Arguments passed to \code{compact_hist()}.
 #'  

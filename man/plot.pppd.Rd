@@ -12,23 +12,26 @@
 \item{pppd}{An object of class \code{pppd}, created by the function \link{calc_pppd()}.}
 
 \item{qi_name}{The name of the quantity of interest to plot. Defaults to \code{"pr"}.
-The other options are \code{"fd"} and \code{"rr"}.
-\enumerate{ \item A single number giving the number of
- cells for the histogram. Defaults to 50. For examining the partial prior
- predictive distritution, too many breaks are preferable to too few.
- \item A character string naming an algorithm to
- compute the number of cells. See documentation for
- \code{hist()} for details and other algorithms.
- \item A vector giving the
- breakpoints between histogram cells.
- \item A function to compute the vector
- of breakpoints.
- \item A function to compute the number of cells.
- }}
+The other options are \code{"fd"} and \code{"rr"}.}
+
+\item{n_breaks}{One of the following:
+\enumerate{
+\item A single number giving the number of
+cells for the histogram. Defaults to 50. For examining the partial prior
+predictive distritution, too many breaks are preferable to too few.
+\item A character string naming an algorithm to
+compute the number of cells. See documentation for
+\code{hist()} for details and other algorithms.
+\item A vector giving the
+breakpoints between histogram cells.
+\item A function to compute the vector
+of breakpoints.
+\item A function to compute the number of cells.
+}}
 
 \item{log_scale}{Logical; should the quantity of interest be plotted on the log scale?
-  Defaults to \code{FALSE}. I recommend setting to \code{TRUE} if the distribution
-  has a long right tail, as can happen with risk-ratios in certain situations.}
+Defaults to \code{FALSE}. I recommend setting to \code{TRUE} if the distribution
+has a long right tail, as can happen with risk-ratios in certain situations.}
 
 \item{upper}{The upper bound of quantity of interest to plot.}
 

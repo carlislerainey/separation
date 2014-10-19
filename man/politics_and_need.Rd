@@ -26,5 +26,11 @@ the their main statistical model of governors' decisions to oppose the
 Medicaid expansion under the PPACA. Most importantly, no Democratic governors
 opposed the expansion, leading to a problem of separation.
 }
+\references{
+Barrilleaux, Charles and Carlisle Rainey. 2014. "The Politics
+  of Need: Examining Governors' Decisions to Oppose the 'Obamacare' Medicaid
+  Expansion." State Politics and Policy Quarterly. Forthcoming. Available at
+  \url{http://crain.co/papers/need.pdf}.
+}
 \keyword{datasets}
 

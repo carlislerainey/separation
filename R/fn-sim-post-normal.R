@@ -21,6 +21,9 @@
 #' positive scalar or a (k+1)-vector, where k is the number of variables in the
 #' model. Presently passed to \code{MCMCmetrop1R}.
 #' 
+#' @references Rainey, Carlisle. "Dealing with Separation in Logistic Regression
+#' Model." Working paper. Available at \url{http://crain.co/papers/separation.pdf}.
+#' 
 #' @export
 
 sim_post_normal <- function(formula, data, sep_var, sd = 4.5,
