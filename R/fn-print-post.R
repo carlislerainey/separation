@@ -34,12 +34,14 @@ print.post <- function(post, digits = 2, prob = 0.9) {
   }
   ess <- sprintf(fmt, coda::effectiveSize(post$mcmc_chains))
   res <- cbind(mean, median, mode, et_ci, hpd_ci, R_hat, ess)
+  accept <- sprintf("%.0f", mean(100*calc_acceptance_rate(post)))
   rownames(res) <- colnames(post$mcmc)
   colnames(res) <- c("mean", "median", "mode", et_ci_name, hpd_ci_name, "R-hat", "eff. n")
   print(noquote(res), right = TRUE)
   cat("----\n")
   cat("Burnin:\t"); cat(post$fn_args$n_burnin); cat("\n")
   cat("Sims:\t"); cat(post$fn_args$n_sims); cat("\n")
+  cat("Accept:\t"); cat(accept); cat("%\n")
   cat("Chains:\t"); cat(post$fn_args$n_chains); cat("\n")
   if (post$fn_args$n_chains > 1) {
     cat("R-hat:\t"); cat(round(post$R_hat[[2]], 1)); cat("\n")
