@@ -1,5 +1,5 @@
 
-context("calc_qi*")
+context("calc_qi")
 
 
 test_that("the sim_post_*() functions return no errors when ran and printed", {
