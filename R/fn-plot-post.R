@@ -1,6 +1,6 @@
 #' @title Plot a quantity of interest
 #'   
-#' @description \code{plot_coef()} produces a density plot for a single
+#' @description \code{plot.post()} produces a density plot for a single
 #'   coefficient from an object of class "post."
 #' 
 #' 
@@ -17,7 +17,7 @@
 #'   
 #' @export
 
-plot_coef <- function(post, var_name, ci_type = "hpd", prob = .9, xlim = NULL, ylim = NULL, ...) {
+plot.post <- function(post, var_name, ci_type = "hpd", prob = .9, xlim = NULL, ylim = NULL, ...) {
   coef <- post$mcmc[, var_name]
   dens <- density(coef, n = 5000)
   if (is.null(xlim)) {  xlim <- range(dens$x)  }

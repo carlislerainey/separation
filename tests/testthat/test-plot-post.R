@@ -1,8 +1,8 @@
 
-context("plot_coef")
+context("plot.post")
 
 
-test_that("the plot_coef() function works", {
+test_that("the plot.post() function works", {
   data(politics_and_need)
   f <- oppose_expansion ~ gop_governor + percent_favorable_aca*percent_uninsured
   post <- sim_post_normal(f, data = politics_and_need, 
@@ -13,5 +13,5 @@ test_that("the plot_coef() function works", {
                           tune = 1) 
   par(mfrow = c(1, 1))
   # a single pr
-  plot_coef(post, "gop_governor")
+  plot(post, "gop_governor")
 })
