@@ -19,7 +19,7 @@ exactly two values and the rest should have exactly one.}
 probability content of the intervals.}
 
 \item{qi_name}{The name of the quantity of interest to calculate. Either
-\code{"pr}" (predicted probability), \code{"rr"} (risk-ratio), or
+\code{"pr"} (predicted probability), \code{"rr"} (risk-ratio), or
 \code{"fd"} (first-difference). Defaults to \code{"pr"}.}
 
 \item{ci_type}{The type of confidence interval to compute. Either
@@ -29,6 +29,11 @@ probability content of the intervals.}
 \description{
 \code{calc_qi()} calculates a quantity of interest from objects
 of class "post."
+}
+\details{
+Researchers can use this function to convert posterior simulations
+of the logistic regression coefficients to quantities of interest, such as
+predicted probabilities, risk-ratios, and first-differences.
 }
 \references{
 Rainey, Carlisle. "Dealing with Separation in Logistic Regression

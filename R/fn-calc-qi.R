@@ -1,8 +1,7 @@
-#' @title Calculate a quantity of interest from objects of class "post."
+ #' @title Calculate a quantity of interest from objects of class "post."
 #'   
 #' @description \code{calc_qi()} calculates a quantity of interest from objects
 #' of class "post."
-#' 
 #' 
 #' @param post An object of class "post" created by one of the sim_post_*()
 #'   functions.
@@ -14,12 +13,16 @@
 #' @param prob A numeric scalar in the interval (0,1) giving the target
 #'   probability content of the intervals.
 #' @param qi_name The name of the quantity of interest to calculate. Either
-#'   \code{"pr}" (predicted probability), \code{"rr"} (risk-ratio), or
-#'   \code{"fd"} (first-difference). Defaults to \code{"pr"}.
+ #'   \code{"pr"} (predicted probability), \code{"rr"} (risk-ratio), or
+ #'   \code{"fd"} (first-difference). Defaults to \code{"pr"}.
 #' @param ci_type The type of confidence interval to compute. Either
 #'   \code{"hpd"} (highest posterior density) or \code{"et"} (equal-tailed). 
 #'   Defaults to \code{"hpd"}.
 #'   
+#' @details Researchers can use this function to convert posterior simulations
+#' of the logistic regression coefficients to quantities of interest, such as
+#' predicted probabilities, risk-ratios, and first-differences.
+#' 
 #' @references Rainey, Carlisle. "Dealing with Separation in Logistic Regression
 #'   Model." Working paper. Available at
 #'   \url{http://crain.co/papers/separation.pdf}.
