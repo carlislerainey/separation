@@ -76,12 +76,19 @@ calc_qi <- function(post, X_pred_list, prob = 0.9, qi_name = "pr", ci_type = "hp
       upr <- q_qi[2]
     }
   }
+  fn_args <- list(
+    post = post,
+    X_pred_list = X_pred_list,
+    prob = prob,
+    qi_name = qi_name,
+    ci_type = ci_type)
   qi <- list(med = median_qi,
              lwr = lwr,
              upr = upr,
              qi_sims = qi,
              prob = prob, 
-             ci_type = ci_type)
+             ci_type = ci_type,
+             fn_args = fn_args)
   class(qi) <- "qi"
   return(qi)
 }
