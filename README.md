@@ -18,8 +18,9 @@ Let's look at a simple example. Suppose we estimate a simple model explaining go
 
 ```r
 data(politics_and_need)
-m <- glm(oppose_expansion ~ gop_governor + percent_uninsured, 
-         family = binomial, data = politics_and_need)
+f <- oppose_expansion ~ gop_governor + percent_favorable_aca + gop_leg + percent_uninsured + 
+    bal2012 + multiplier + percent_nonwhite + percent_metro
+m <- glm(f, family = binomial, data = politics_and_need)
 
 library(texreg)  # for screenreg, which neatly prints the results
 ```
@@ -38,22 +39,34 @@ screenreg(m)
 
 ```
 ## 
-## ============================
-##                    Model 1  
-## ----------------------------
-## (Intercept)          -20.92 
-##                    (2370.03)
-## gop_governor          19.46 
-##                    (2370.03)
-## percent_uninsured      0.10 
-##                       (0.10)
-## ----------------------------
-## AIC                   46.33 
-## BIC                   52.07 
-## Log Likelihood       -20.17 
-## Deviance              40.33 
-## Num. obs.             50    
-## ============================
+## ================================
+##                        Model 1  
+## --------------------------------
+## (Intercept)              -19.39 
+##                        (3224.41)
+## gop_governor              20.35 
+##                        (3224.40)
+## percent_favorable_aca      0.01 
+##                           (0.09)
+## gop_leg                    2.43 
+##                           (1.48)
+## percent_uninsured          0.11 
+##                           (0.27)
+## bal2012                    0.00 
+##                           (0.01)
+## multiplier                -0.32 
+##                           (1.08)
+## percent_nonwhite           0.05 
+##                           (0.08)
+## percent_metro             -0.08 
+##                           (0.05)
+## --------------------------------
+## AIC                       49.71 
+## BIC                       66.92 
+## Log Likelihood           -15.86 
+## Deviance                  31.71 
+## Num. obs.                 50    
+## ================================
 ## *** p < 0.001, ** p < 0.01, * p < 0.05
 ```
 
@@ -97,7 +110,8 @@ data(politics_and_need)
 normal_3 <- rnorm(10000, sd = 3)
 
 # model formula
-f <- oppose_expansion ~ gop_governor + percent_favorable_aca + percent_uninsured
+f <- oppose_expansion ~ gop_governor + percent_favorable_aca + gop_leg + percent_uninsured + 
+    bal2012 + multiplier + percent_nonwhite + percent_metro
 
 # informative prior
 pppd_inf <- calc_pppd(f, data = politics_and_need, prior_sims = normal_3,     
@@ -113,17 +127,19 @@ print(pppd_inf)
 
 ```
 ## 
-## Model:	oppose_expansion ~ gop_governor + percent_favorable_aca + percent_uninsured
+## Model:	oppose_expansion ~ gop_governor + percent_favorable_aca + gop_leg + 
+##     percent_uninsured + bal2012 + multiplier + percent_nonwhite + 
+##     percent_metro
 ## Prior for gop_governor:	Normal(0, 3)
 ## 
 ##    percentile	predicted probability	first-difference	risk-ratio	
-##    1%		0			0.009			1.02			
-##    5%		0.002			0.049			1.13			
-##    25%		0.024			0.206			1.925			
-##    50%		0.087			0.341			4.908			
-##    75%		0.223			0.405			18.09			
-##    95%		0.379			0.426			189.4			
-##    99%		0.42			0.428			1384			
+##    1%		0.001			0.011			1.02			
+##    5%		0.003			0.049			1.101			
+##    25%		0.035			0.234			1.787			
+##    50%		0.126			0.406			4.232			
+##    75%		0.298			0.497			15.32			
+##    95%		0.483			0.528			162.4			
+##    99%		0.521			0.531			965.2			
 ```
 
 That looks reasonable. There is an even chance of the probabilty of opposition falling above and below 0.09, which seems about right. Also, there is a 25% chance that the probability falls below 0.02, which also seems like a reasonable prior belief.
@@ -156,7 +172,7 @@ mean(pppd_inf$pr < 0.01)
 ```
 
 ```
-## [1] 0.1464
+## [1] 0.1156
 ```
 
 ```r
@@ -164,7 +180,7 @@ mean(pppd_inf$pr < 0.001)
 ```
 
 ```
-## [1] 0.02704
+## [1] 0.01778
 ```
 
 From this we can see that there is a probability of 0.15 that less than 1% of Democratic governors oppose the expansion and a probability of 0.025 that less than 0.1% of Democratic governors oppose the expansion. Again, these seem reasonable.
@@ -204,3 +220,77 @@ plot(pppds, log_scale = TRUE, xticklab = "sci_notation")
 ```
 
 ![plot of chunk sci_notation](sci_notation.png) 
+
+Now that we've chosen the three priors, we can do the MCMC using the `sim_pos_normal()` functions.
+
+
+```r
+# enthusiastic and skeptical prior
+post_inf <- sim_post_normal(f, data = politics_and_need, 
+                            sep_var = "gop_governor", sd = 3, 
+                            n_sims = 1000)
+```
+
+```
+## 
+## Computing proposal distribution...
+## 
+## Running 3 chains in parallel of 1500 iterations each--this may take a while...
+## Finished running chains!
+## 
+## Checking convergence...
+## 
+## ######## WARNING: #########
+## 
+## The multivariate R-hat statistic of 1.15 suggests that the chains have NOT converged.
+```
+
+```r
+post_enth <- sim_post_normal(f, data = politics_and_need, 
+                            sep_var = "gop_governor", sd = 9, 
+                            n_sims = 1000)
+```
+
+```
+## 
+## Computing proposal distribution...
+## 
+## Running 3 chains in parallel of 1500 iterations each--this may take a while...
+## Finished running chains!
+## 
+## Checking convergence...
+## 
+## ######## WARNING: #########
+## 
+## The multivariate R-hat statistic of 1.2 suggests that the chains have NOT converged.
+```
+
+```r
+post_skep <- sim_post_normal(f, data = politics_and_need, 
+                            sep_var = "gop_governor", sd = 1.5, 
+                            n_sims = 1000)
+```
+
+```
+## 
+## Computing proposal distribution...
+## 
+## Running 3 chains in parallel of 1500 iterations each--this may take a while...
+## Finished running chains!
+## 
+## Checking convergence...
+## 
+## ######## WARNING: #########
+## 
+## The multivariate R-hat statistic of 1.23 suggests that the chains have NOT converged.
+```
+
+And we can compare the coefficients for `gop_governor` to see how the priors affected the inferences.
+
+
+```r
+posts <- combine_post(post_skep, post_inf, post_enth)
+plot(posts, var_name = "gop_governor")
+```
+
+![plot of chunk mcmc](mcmc.png) 

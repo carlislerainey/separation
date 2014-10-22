@@ -22,8 +22,9 @@ Let's look at a simple example. Suppose we estimate a simple model explaining go
 
 ```{r}
 data(politics_and_need)
-m <- glm(oppose_expansion ~ gop_governor + percent_uninsured, 
-         family = binomial, data = politics_and_need)
+f <- oppose_expansion ~ gop_governor + percent_favorable_aca + gop_leg + percent_uninsured + 
+    bal2012 + multiplier + percent_nonwhite + percent_metro
+m <- glm(f, family = binomial, data = politics_and_need)
 
 library(texreg)  # for screenreg, which neatly prints the results
 screenreg(m)
@@ -61,7 +62,8 @@ data(politics_and_need)
 normal_3 <- rnorm(10000, sd = 3)
 
 # model formula
-f <- oppose_expansion ~ gop_governor + percent_favorable_aca + percent_uninsured
+f <- oppose_expansion ~ gop_governor + percent_favorable_aca + gop_leg + percent_uninsured + 
+    bal2012 + multiplier + percent_nonwhite + percent_metro
 
 # informative prior
 pppd_inf <- calc_pppd(f, data = politics_and_need, prior_sims = normal_3,     
@@ -124,4 +126,29 @@ The notation looks a little sloppy, so we can use `compactr::eplot()`'s ability 
 
 ```{r sci_notation, fig.height=2.5, fig.width=8, fig.path=""}
 plot(pppds, log_scale = TRUE, xticklab = "sci_notation")
+```
+
+Now that we've chosen the three priors, we can do the MCMC using the `sim_pos_normal()` functions.
+
+```{r}
+
+# enthusiastic and skeptical prior
+post_inf <- sim_post_normal(f, data = politics_and_need, 
+                            sep_var = "gop_governor", sd = 3, 
+                            n_sims = 1000)
+post_enth <- sim_post_normal(f, data = politics_and_need, 
+                            sep_var = "gop_governor", sd = 9, 
+                            n_sims = 1000)
+post_skep <- sim_post_normal(f, data = politics_and_need, 
+                            sep_var = "gop_governor", sd = 1.5, 
+                            n_sims = 1000)
+```
+
+And we can compare the coefficients for `gop_governor` to see how the priors affected the inferences.
+
+```{r mcmc, fig.height=2.5, fig.width=8, fig.path=""}
+
+posts <- combine_post(post_skep, post_inf, post_enth)
+plot(posts, var_name = "gop_governor")
+
 ```
