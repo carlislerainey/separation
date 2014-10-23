@@ -13,16 +13,18 @@
 #'   probability content of the intervals.
 #' @param xlim The x limits (x1, x2) of the plot.
 #' @param ylim The y limits (y1, y2) of the plot.
+#' @param main The title of the plot.
 #' @param ... Arguments passed to \code{eplot()} in the package \code{compactr}.
 #'   
 #' @export
 
-plot.post <- function(post, var_name, ci_type = "hpd", prob = .9, xlim = NULL, ylim = NULL, ...) {
+plot.post <- function(post, var_name, ci_type = "hpd", prob = .9, main = NULL, xlim = NULL, ylim = NULL, ...) {
   coef <- post$mcmc[, var_name]
   dens <- density(coef, n = 5000)
   if (is.null(xlim)) {  xlim <- range(dens$x)  }
   if (is.null(ylim)) {  ylim <- range(dens$y)  }
-  compactr::eplot(xlim = xlim, ylim = ylim, ...)
+  if (is.null(main)) { main <- post_inf$prior }
+  compactr::eplot(xlim = xlim, ylim = ylim, main = main, ...)
   # add shaded region
   median_coef <- median(coef)
   if (ci_type == "hpd") {

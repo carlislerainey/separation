@@ -4,7 +4,7 @@
 \title{Plot a quantity of interest}
 \usage{
 \method{plot}{post}(post, var_name, ci_type = "hpd", prob = 0.9,
-  xlim = NULL, ylim = NULL, ...)
+  main = NULL, xlim = NULL, ylim = NULL, ...)
 }
 \arguments{
 \item{post}{An object of class "post" created by one of the \code{sim_post_*()} functions.}
@@ -17,6 +17,8 @@ Defaults to \code{"hpd"}.}
 
 \item{prob}{A numeric scalar in the interval (0,1) giving the target
 probability content of the intervals.}
+
+\item{main}{The title of the plot.}
 
 \item{xlim}{The x limits (x1, x2) of the plot.}
 
