@@ -23,7 +23,7 @@ plot.post <- function(post, var_name, ci_type = "hpd", prob = .9, main = NULL, x
   dens <- density(coef, n = 5000)
   if (is.null(xlim)) {  xlim <- range(dens$x)  }
   if (is.null(ylim)) {  ylim <- range(dens$y)  }
-  if (is.null(main)) { main <- post_inf$prior }
+  if (is.null(main)) { main <- post$prior }
   compactr::eplot(xlim = xlim, ylim = ylim, main = main, ...)
   # add shaded region
   median_coef <- median(coef)
