@@ -107,6 +107,7 @@ library(separation)
 data(politics_and_need)
 
 # simulate from potential prior
+set.seed(1234)
 normal_3 <- rnorm(10000, sd = 3)
 
 # model formula
@@ -133,13 +134,13 @@ print(pppd_inf)
 ## Prior for gop_governor:	Normal(0, 3)
 ## 
 ##    percentile	predicted probability	first-difference	risk-ratio	
-##    1%		0.001			0.011			1.02			
-##    5%		0.003			0.049			1.101			
-##    25%		0.035			0.234			1.787			
-##    50%		0.126			0.406			4.232			
-##    75%		0.298			0.497			15.32			
-##    95%		0.483			0.528			162.4			
-##    99%		0.521			0.531			965.2			
+##    1%		0.001			0.011			1.021			
+##    5%		0.004			0.046			1.094			
+##    25%		0.036			0.215			1.678			
+##    50%		0.135			0.397			3.951			
+##    75%		0.317			0.495			14.62			
+##    95%		0.486			0.528			149.5			
+##    99%		0.521			0.531			945.8			
 ```
 
 That looks reasonable. There is an even chance of the probabilty of opposition falling above and below 0.09, which seems about right. Also, there is a 25% chance that the probability falls below 0.02, which also seems like a reasonable prior belief.
@@ -172,7 +173,7 @@ mean(pppd_inf$pr < 0.01)
 ```
 
 ```
-## [1] 0.1156
+## [1] 0.1126
 ```
 
 ```r
@@ -180,7 +181,7 @@ mean(pppd_inf$pr < 0.001)
 ```
 
 ```
-## [1] 0.01778
+## [1] 0.01665
 ```
 
 From this we can see that there is a probability of 0.15 that less than 1% of Democratic governors oppose the expansion and a probability of 0.025 that less than 0.1% of Democratic governors oppose the expansion. Again, these seem reasonable.
@@ -190,6 +191,7 @@ We might also like to compare our informative prior to a "skeptical" and "enthus
 
 ```r
 # simulate from potential skeptical and enthusiastic priors
+set.seed(1234)
 normal_1 <- rnorm(10000, sd = 1.5)
 normal_4 <- rnorm(10000, sd = 9)
 
@@ -226,6 +228,7 @@ Now that we've chosen the three priors, we can do the MCMC using the `sim_pos_no
 
 ```r
 # enthusiastic and skeptical prior
+set.seed(1234)
 post_inf <- sim_post_normal(f, data = politics_and_need, 
                             sep_var = "gop_governor", sd = 3, 
                             n_sims = 1000)
@@ -242,7 +245,7 @@ post_inf <- sim_post_normal(f, data = politics_and_need,
 ## 
 ## ######## WARNING: #########
 ## 
-## The multivariate R-hat statistic of 1.15 suggests that the chains have NOT converged.
+## The multivariate R-hat statistic of 1.22 suggests that the chains have NOT converged.
 ```
 
 ```r
@@ -262,7 +265,7 @@ post_enth <- sim_post_normal(f, data = politics_and_need,
 ## 
 ## ######## WARNING: #########
 ## 
-## The multivariate R-hat statistic of 1.2 suggests that the chains have NOT converged.
+## The multivariate R-hat statistic of 1.23 suggests that the chains have NOT converged.
 ```
 
 ```r
@@ -282,7 +285,7 @@ post_skep <- sim_post_normal(f, data = politics_and_need,
 ## 
 ## ######## WARNING: #########
 ## 
-## The multivariate R-hat statistic of 1.23 suggests that the chains have NOT converged.
+## The multivariate R-hat statistic of 1.21 suggests that the chains have NOT converged.
 ```
 
 And we can compare the coefficients for `gop_governor` to see how the priors affected the inferences.
@@ -294,3 +297,250 @@ plot(posts, var_name = "gop_governor")
 ```
 
 ![plot of chunk mcmc](mcmc.png) 
+
+Notice that the posteriors are quite different, with the skeptical prior ruling out coefficients that are larger than about four and the enthusiastic prior suggesting that coefficients as large as about 14 are plausible.
+
+But how does this affect the key quantities of interest?
+
+
+```r
+X_pred_list <- set_at_median(f, politics_and_need)
+X_pred_list$gop_governor <- 0:1
+
+qi_inf <- calc_qi(post_inf, X_pred_list, qi_name = "fd")
+qi_enth <- calc_qi(post_enth, X_pred_list, qi_name = "fd")
+qi_skep <- calc_qi(post_skep, X_pred_list, qi_name = "fd")
+
+qis <- combine_qi(qi_skep, qi_inf, qi_enth)
+
+plot(qis, xlim = c(0, 1), xat = c(0, .2, .4, .6, .8, 1))
+```
+
+![plot of chunk qi](qi.png) 
+
+We can also do "hypothesis tests" using the posterior probabilities of the research hypothesis (i.e., the number of MCMC simulations that are consistent with the researcher's hypothesis) using the `plot_hyp_test()` function.
+
+
+```r
+plot_hyp_test(posts, "gop_governor", research_hyp = "+", xlab = expression(Pr(beta[GOP~Gov] > 0)))
+```
+
+![plot of chunk hyp-tests](hyp-tests1.png) 
+
+```r
+plot_hyp_test(posts, "percent_uninsured", research_hyp = "-", xlab = expression(Pr(beta[Uninsured] > 0)))
+```
+
+![plot of chunk hyp-tests](hyp-tests2.png) 
+
+I've also worked hard to make `separation` "abondonable" at any point, so that you can use it to generate your own quantities of interest but make your own plots, for example. This allows the user to have complete control over how to present her results.
+
+
+```r
+gg_inf <- data.frame(qi_inf$fn_args$post$prior, qi_inf$qi_sims)
+gg_enth <- data.frame(qi_enth$fn_args$post$prior, qi_enth$qi_sims)
+gg_skep <- data.frame(qi_skep$fn_args$post$prior, qi_skep$qi_sims)
+names(gg_inf) <- names(gg_enth) <- names(gg_skep) <- c("Prior", "Simulations")
+
+gg <- rbind(gg_inf, gg_enth, gg_skep)
+
+library(ggplot2)
+ggplot(gg, aes(Simulations, fill = Prior)) +
+  geom_density(alpha = 0.4) + theme_classic()
+```
+
+![plot of chunk ggplot](ggplot.png) 
+
+
+```r
+library(arm)
+```
+
+```
+## Loading required package: MASS
+## Loading required package: Matrix
+## Loading required package: lme4
+## Loading required package: Rcpp
+## 
+## arm (Version 1.7-03, built: 2014-4-27)
+## 
+## Working directory is /Users/carlislerainey/Dropbox/packages/separation
+## 
+## 
+## Attaching package: 'arm'
+## 
+## The following object is masked from 'package:texreg':
+## 
+##     coefplot
+```
+
+```r
+politics_and_need$std_percent_uninsured <- rescale(politics_and_need$percent_uninsured)
+
+f <- oppose_expansion ~ gop_governor + percent_favorable_aca + gop_leg + std_percent_uninsured + 
+    bal2012 + multiplier + percent_nonwhite + percent_metro
+
+set.seed(1234)
+post_inf_std <- sim_post_normal(f, data = politics_and_need, 
+                            sep_var = "gop_governor", sd = 3, 
+                            n_sims = 1000)
+```
+
+```
+## 
+## Computing proposal distribution...
+## 
+## Running 3 chains in parallel of 1500 iterations each--this may take a while...
+## Finished running chains!
+## 
+## Checking convergence...
+## 
+## ######## WARNING: #########
+## 
+## The multivariate R-hat statistic of 1.12 suggests that the chains have NOT converged.
+```
+
+```r
+post_enth_std <- sim_post_normal(f, data = politics_and_need, 
+                            sep_var = "gop_governor", sd = 9, 
+                            n_sims = 1000)
+```
+
+```
+## 
+## Computing proposal distribution...
+## 
+## Running 3 chains in parallel of 1500 iterations each--this may take a while...
+## Finished running chains!
+## 
+## Checking convergence...
+## 
+## ######## WARNING: #########
+## 
+## The multivariate R-hat statistic of 1.09 suggests that the chains have NOT converged.
+```
+
+```r
+post_skep_std <- sim_post_normal(f, data = politics_and_need, 
+                            sep_var = "gop_governor", sd = 1.5, 
+                            n_sims = 1000)
+```
+
+```
+## 
+## Computing proposal distribution...
+## 
+## Running 3 chains in parallel of 1500 iterations each--this may take a while...
+## Finished running chains!
+## 
+## Checking convergence...
+## 
+## ######## WARNING: #########
+## 
+## The multivariate R-hat statistic of 1.21 suggests that the chains have NOT converged.
+```
+
+```r
+post_jeffreys_std <- sim_post_jeffreys(f, data = politics_and_need, 
+                            n_sims = 5000)
+```
+
+```
+## 
+## Computing proposal distribution...
+## 
+## Running 3 chains in parallel of 7500 iterations each--this may take a while...
+## Finished running chains!
+## 
+## Checking convergence...
+## 
+## ######## WARNING: #########
+## 
+## The multivariate R-hat statistic of 1.13 suggests that the chains have NOT converged.
+```
+
+```r
+data(politics_and_need_rescaled)
+f_gelman <- oppose_expansion ~ gop_governor + percent_favorable_aca + gop_leg +
+   percent_uninsured + bal2012 + multiplier + percent_nonwhite + percent_metro
+post_gelman_std <- sim_post_gelman(f_gelman, data = politics_and_need_rescaled, 
+                            n_sims = 1000)
+```
+
+```
+## 
+## Computing proposal distribution...
+## 
+## Running 3 chains in parallel of 1500 iterations each--this may take a while...
+## Finished running chains!
+## 
+## Checking convergence...
+## 
+## ######## WARNING: #########
+## 
+## The multivariate R-hat statistic of 1.13 suggests that the chains have NOT converged.
+```
+
+```r
+# posts <- combine_post(post_skep_std, post_inf_std, post_enth_std, 
+#              post_jeffreys_std, post_gelman_std)
+#
+# plot(posts, var_name = "gop_governor",
+#     xlab = "Coefficient for GOP Governor",
+#     ylab = "Posterior Density")
+
+library(compactr)
+par(mfrow = c(2, 3), oma = c(3, 3, 1, 1), mar = c(1, 1, 1, 1))
+# skeptical prior
+eplot(xlim = range(post_skep_std$mcmc[, "gop_governor"],
+                   post_inf_std$mcmc[, "gop_governor"],
+                   post_enth_std$mcmc[, "gop_governor"]),
+      ylim = range(post_skep_std$mcmc[, "std_percent_uninsured"],
+                   post_inf_std$mcmc[, "std_percent_uninsured"],
+                   post_enth_std$mcmc[, "std_percent_uninsured"]),
+      xlab = "Coefficient for GOP Governor",
+      ylab = "Coefficient for Percent Uninsured",
+      main = "Normal(0, 1.5)")
+cwh <- 1*(post_skep_std$mcmc[, "gop_governor"] > -post_skep_std$mcmc[, "std_percent_uninsured"])
+abline(a = 0, b = -1)
+points(post_skep_std$mcmc[, "gop_governor"], 
+       post_skep_std$mcmc[, "std_percent_uninsured"],
+       col = rgb(1 - cwh, cwh, 0, .1))
+text(12, 7, paste("Pr(Research Hyp.) = ", round(mean(cwh), 2), sep = ""))
+# informative prior
+aplot("Normal(0, 3)")
+cwh <- 1*(post_inf_std$mcmc[, "gop_governor"] > -post_inf_std$mcmc[, "std_percent_uninsured"])
+abline(a = 0, b = -1)
+points(post_inf_std$mcmc[, "gop_governor"], 
+       post_inf_std$mcmc[, "std_percent_uninsured"],
+       col = rgb(1 - cwh, cwh, 0, .1))
+text(12, 7, paste("Pr(Research Hyp.) = ", round(mean(cwh), 2), sep = ""))
+# enthusiastic prior
+aplot("Normal(0, 9)")
+cwh <- 1*(post_enth_std$mcmc[, "gop_governor"] > -post_enth_std$mcmc[, "std_percent_uninsured"])
+abline(a = 0, b = -1)
+points(post_enth_std$mcmc[, "gop_governor"], 
+       post_enth_std$mcmc[, "std_percent_uninsured"],
+       col = rgb(1 - cwh, cwh, 0, .1))
+text(12, 7, paste("Pr(Research Hyp.) = ", round(mean(cwh), 2), sep = ""))
+# Jeffreys prior
+aplot("Jeffreys' Prior")
+cwh <- 1*(post_jeffreys_std$mcmc[, "gop_governor"] > -post_jeffreys_std$mcmc[, "std_percent_uninsured"])
+abline(a = 0, b = -1)
+points(post_jeffreys_std$mcmc[, "gop_governor"], 
+       post_jeffreys_std$mcmc[, "std_percent_uninsured"],
+       col = rgb(1 - cwh, cwh, 0, .1))
+text(12, 7, paste("Pr(Research Hyp.) = ", round(mean(cwh), 2), sep = ""))
+# Gelman et al.'s prior
+aplot("Gelman et al.'s Prior")
+cwh <- 1*(post_gelman_std$mcmc[, "gop_governor"] > -post_gelman_std$mcmc[, "percent_uninsured"])
+abline(a = 0, b = -1)
+points(post_gelman_std$mcmc[, "gop_governor"], 
+       post_gelman_std$mcmc[, "percent_uninsured"],
+       col = rgb(1 - cwh, cwh, 0, .1))
+text(12, 7, paste("Pr(Research Hyp.) = ", round(mean(cwh), 2), sep = ""))
+```
+
+![plot of chunk compare-coef](compare-coef.png) 
+
+The green points in this figure are consistenth with the research hypothsis that $\beta_{\text{GOP Gov.}} > -\beta_{\text{Std. %Uninsured}}$. We can see that the choice of prior chances the strenght of evidence about the posterior probability of this hypothesis. In this case, the researcher would probably draw similar substantive conclusions, but this example illustrates that changing the prior has the potential to change inferences when comparing coefficients.
