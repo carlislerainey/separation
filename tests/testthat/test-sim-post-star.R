@@ -1,8 +1,8 @@
 
-context("sim_post_*")
+context("sim_post_star")
 
 
-test_that("the sim_post_*() functions return no errors when ran and printed", {
+test_that("the sim_post_star() functions return no errors when ran and printed", {
   data(politics_and_need)
   data(politics_and_need_rescaled)
   f <- oppose_expansion ~ gop_governor + percent_favorable_aca + percent_uninsured

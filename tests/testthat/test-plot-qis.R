@@ -26,7 +26,7 @@ test_that("the plot.qis() work as intended", {
   qi2 <- calc_qi(post2, X_pred_list)
   qi3 <- calc_qi(post3, X_pred_list)
   qis <- combine_qi(qi3, qi, qi2)
-  plot_qis_1(qis)
+  #plot_qis_1(qis)
   plot(qis, plot_matrix_layout = c(2, 2))
   
   x_vals <- seq(0, 1, by = .01)
@@ -35,6 +35,6 @@ test_that("the plot.qis() work as intended", {
   qi2 <- calc_qi(post2, X_pred_list)
   qi3 <- calc_qi(post3, X_pred_list)
   qis <- combine_qi(qi3, qi, qi2)
-  plot_qis_range(qis, x_vals)
+  #plot_qis_range(qis, x_vals)
   plot(qis = qis, x_vals = x_vals, plot_matrix_layout = c(2, 2))
 })

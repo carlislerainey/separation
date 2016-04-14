@@ -2,7 +2,7 @@
 context("calc_qi")
 
 
-test_that("the sim_post_*() functions return no errors when ran and printed", {
+t <- test_that("the calculated quantities of interest seem right", {
   data(politics_and_need)
   f <- oppose_expansion ~ gop_governor + percent_favorable_aca*percent_uninsured
   post <- sim_post_normal(f, data = politics_and_need, 
